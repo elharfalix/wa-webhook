@@ -21,9 +21,9 @@ app.get("/webhook", (req, res) => {
 // 2) Incoming messages (Meta sends events here)
 app.post("/webhook", (req, res) => {
   console.log("Webhook event received:", JSON.stringify(req.body, null, 2));
-  // ✅ الآن فقط نستقبل ونطبع في اللوج، بدون ردود
-  return res.sendStatus(200);
+  res.sendStatus(200);
 });
+
 
 // Health check
 app.get("/", (req, res) => {
