@@ -19,10 +19,34 @@ app.get("/webhook", (req, res) => {
 });
 
 // 2) Incoming messages (Meta sends events here)
-app.post("/webhook", (req, res) => {
-  console.log("Webhook event received:", JSON.stringify(req.body, null, 2));
-  res.sendStatus(200);
+app.post("/webhook", async (req, res) => {
+  try {
+    console.log("Incoming WhatsApp event:", JSON.stringify(req.body, null, 2));
+
+    const message =
+      req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body;
+
+    if (!message) {
+      return res.sendStatus(200);
+    }
+
+    await fetch("https://webhook.botpress.cloud/4b66e022-5a30-4dfd-9d2c-88b11f6f9d07", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        text: message
+      })
+    });
+
+    res.sendStatus(200);
+  } catch (error) {
+    console.error("Error forwarding to Botpress:", error);
+    res.sendStatus(500);
+  }
 });
+
 
 
 // Health check
